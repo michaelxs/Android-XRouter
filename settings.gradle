@@ -1,0 +1,1 @@
+include ':app', ':xrouter-annotation', ':xrouter-compileonly', ':xrouter-core', ':xrouter-compiler', ':routera', ':routerb'
