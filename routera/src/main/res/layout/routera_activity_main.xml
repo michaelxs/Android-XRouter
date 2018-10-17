@@ -17,9 +17,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="15dp"
-            android:text="route activity and method in module routerb :" />
+            android:layout_margin="15dp"
+            android:text="Route activity and method in module routerb\nFor example :"
+            android:textColor="#00bc71"
+            android:textStyle="bold" />
 
         <ListView
             android:id="@+id/listView"
@@ -30,7 +31,8 @@
             android:id="@+id/tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp" />
+            android:layout_marginLeft="15dp"
+            android:textColor="#ff0000" />
 
     </LinearLayout>
 </layout>
