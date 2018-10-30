@@ -8,11 +8,10 @@ import org.json.JSONObject
 import java.io.Serializable
 
 /**
- * router config
  * Created by blue on 2018/9/30.
  */
 class XRouterConfig(
-        private val context: Context
+        val context: Context
 ) {
 
     var mTarget = ""
@@ -20,6 +19,11 @@ class XRouterConfig(
     var mRequestCode = -1
 
     var mIntentFlags = -1
+
+    var mEnterAnim = -1
+    var mExitAnim = -1
+
+    var mAny: Any? = null
 
     val mData by lazy { Bundle() }
 
@@ -35,6 +39,17 @@ class XRouterConfig(
 
     fun intentFlags(intentFlags: Int): XRouterConfig {
         mIntentFlags = intentFlags
+        return this
+    }
+
+    fun transition(enterAnim: Int, exitAnim: Int): XRouterConfig {
+        mEnterAnim = enterAnim
+        mExitAnim = exitAnim
+        return this
+    }
+
+    fun any(any: Any): XRouterConfig {
+        mAny = any
         return this
     }
 
@@ -99,13 +114,13 @@ class XRouterConfig(
     }
 
     @JvmOverloads
-    fun jump(routerCallBack: XRouterCallBack? = null) {
-        XRouter.jump(context, this, routerCallBack)
+    fun jump(routerCallback: XRouterCallback? = null) {
+        XRouter.jump(this, routerCallback)
     }
 
     @JvmOverloads
-    fun call(routerCallBack: XRouterCallBack? = null) {
-        XRouter.call(context, this, routerCallBack)
+    fun call(routerCallback: XRouterCallback? = null) {
+        XRouter.call(this, routerCallback)
     }
 
     override fun toString(): String {
@@ -114,11 +129,14 @@ class XRouterConfig(
             jsonObject.put("target", mTarget)
             jsonObject.put("requestCode", mRequestCode)
             jsonObject.put("intentFlags", mIntentFlags)
+            jsonObject.put("enterAnim", mEnterAnim)
+            jsonObject.put("exitAnim", mExitAnim)
             jsonObject.put("data", mData)
+            mAny?.let { jsonObject.put("any", it) }
         } catch (e: JSONException) {
             e.printStackTrace()
         }
 
-        return jsonObject.toString()
+        return jsonObject.toString(4)
     }
 }

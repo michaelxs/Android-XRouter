@@ -1,22 +1,15 @@
 package com.blue.xrouter
 
-import android.content.Context
-import android.os.Bundle
-
 /**
- * router callback
  * Created by blue on 2018/9/29.
  */
-abstract class XRouterCallBack {
+abstract class XRouterCallback {
 
     /**
-     * bundle limit 1Mb
+     * data bundle limit 1Mb
      */
-    abstract fun onRouterSuccess(context: Context, data: Bundle? = null)
+    abstract fun onRouterSuccess(routerResult: XRouterResult)
 
-    open fun onRouterSuccess(context: Context, data: Bundle? = null, others: Any? = null) {
-    }
-
-    open fun onRouterError(context: Context) {
+    open fun onRouterError(routerResult: XRouterResult) {
     }
 }

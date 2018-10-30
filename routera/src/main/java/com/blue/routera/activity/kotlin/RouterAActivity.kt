@@ -1,7 +1,6 @@
 package com.blue.routera.activity.kotlin
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.databinding.DataBindingUtil
 import android.os.Bundle
@@ -13,7 +12,8 @@ import android.widget.Toast
 import com.blue.routera.R
 import com.blue.routera.databinding.RouteraActivityMainBinding
 import com.blue.xrouter.XRouter
-import com.blue.xrouter.XRouterCallBack
+import com.blue.xrouter.XRouterCallback
+import com.blue.xrouter.XRouterResult
 import com.blue.xrouter.annotation.Router
 import kotlinx.android.synthetic.main.routera_activity_main.*
 
@@ -36,11 +36,13 @@ class RouterAActivity : AppCompatActivity() {
                 0 -> {
                     XRouter.with(this)
                             .target("www.RouterBActivity.com")
+                            .intentFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                             .jump()
                 }
                 1 -> {
                     XRouter.with(this)
                             .target("hello.world")
+                            .transition(android.R.anim.fade_in, android.R.anim.fade_out)
                             .jump()
                 }
                 2 -> {
@@ -53,19 +55,19 @@ class RouterAActivity : AppCompatActivity() {
                             .target("hello.world")
                             .data("name", "blue")
                             .data("age", 18)
+                            .any(Fragment())
                             .jump()
                 }
                 4 -> {
                     XRouter.with(this)
                             .target("www.google.com")
-                            .jump(object : XRouterCallBack() {
-                                override fun onRouterSuccess(context: Context, data: Bundle?) {
+                            .jump(object : XRouterCallback() {
+                                override fun onRouterSuccess(routerResult: XRouterResult) {
                                 }
 
-                                override fun onRouterError(context: Context) {
-                                    Toast.makeText(context, "target activity is not find", Toast.LENGTH_SHORT).show()
+                                override fun onRouterError(routerResult: XRouterResult) {
+                                    Toast.makeText(this@RouterAActivity, "target activity is not find", Toast.LENGTH_SHORT).show()
                                 }
-
                             })
                 }
                 5 -> {
@@ -84,23 +86,20 @@ class RouterAActivity : AppCompatActivity() {
                             .target("getSum_kotlin")
                             .data("a", 1)
                             .data("b", 2)
-                            .call(object : XRouterCallBack() {
-                                override fun onRouterSuccess(context: Context, data: Bundle?) {
-                                    binding.tv.text = String.format("getSum() result is : %s", data?.getInt("result"))
+                            .call(object : XRouterCallback() {
+                                override fun onRouterSuccess(routerResult: XRouterResult) {
+                                    binding.tv.text = String.format("getSum() result is : %s", routerResult.data?.getInt("result"))
                                 }
                             })
                 }
                 8 -> {
                     XRouter.with(this)
                             .target("getFragment_kotlin")
-                            .call(object : XRouterCallBack() {
-                                override fun onRouterSuccess(context: Context, data: Bundle?) {
-                                }
-
-                                override fun onRouterSuccess(context: Context, data: Bundle?, others: Any?) {
-                                    others?.let {
-                                        if (others is Fragment) {
-                                            binding.tv.text = String.format("getFragment() result is : %s", others)
+                            .call(object : XRouterCallback() {
+                                override fun onRouterSuccess(routerResult: XRouterResult) {
+                                    routerResult.obj?.let {
+                                        if (it is Fragment) {
+                                            binding.tv.text = String.format("getFragment() result is : %s", it)
                                         }
                                     }
                                 }

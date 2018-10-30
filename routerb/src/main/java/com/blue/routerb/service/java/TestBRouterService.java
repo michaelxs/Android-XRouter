@@ -1,38 +1,44 @@
 package com.blue.routerb.service.java;
 
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
-import com.blue.xrouter.XRouterCallBack;
+import com.blue.xrouter.XRouterParams;
+import com.blue.xrouter.XRouterResult;
 import com.blue.xrouter.annotation.Router;
 
 /**
+ * java provides service
  * Created by blue on 2018/10/12.
  */
 
 public class TestBRouterService {
 
     @Router("toast_java")
-    public static void toast(Context context, Bundle data, XRouterCallBack callBack) {
-        Toast.makeText(context, "toast from other module", Toast.LENGTH_SHORT).show();
+    public static void toast(XRouterParams routerParams) {
+        Toast.makeText(routerParams.getContext(), "toast from other module", Toast.LENGTH_SHORT).show();
     }
 
     @Router("getSum_java")
-    public static void getSum(Context context, Bundle data, XRouterCallBack callBack) {
-        int a = data.getInt("a");
-        int b = data.getInt("b");
+    public static void getSum(XRouterParams routerParams) {
+        int a = routerParams.getData().getInt("a");
+        int b = routerParams.getData().getInt("b");
         int result = a + b;
 
+        Bundle data = new Bundle();
         data.putInt("result", result);
-        callBack.onRouterSuccess(context, data);
+        if (routerParams.getCallback() != null) {
+            routerParams.getCallback().onRouterSuccess(new XRouterResult(data));
+        }
     }
 
     @Router("getFragment_java")
-    public static void getFragment(Context context, Bundle data, XRouterCallBack callBack) {
+    public static void getFragment(XRouterParams routerParams) {
         Fragment fragment = new Fragment();
-        callBack.onRouterSuccess(context, data, fragment);
+        if (routerParams.getCallback() != null) {
+            routerParams.getCallback().onRouterSuccess(new XRouterResult(null, fragment));
+        }
     }
 }

@@ -16,12 +16,16 @@ object XRouter {
 
     private val pagesMapping by lazy { mutableMapOf<String, Class<out Activity>>() }
     private val methodMapping by lazy { mutableMapOf<String, XRouterMethod>() }
+    private val interceptorMapping by lazy { mutableMapOf<Int, XRouterInterceptor>() }
+    private val interceptorPriorityList by lazy { mutableListOf<Int>() }
+    private var interceptorIndex = 0
 
     @JvmStatic
-    fun init(isDebug: Boolean = false) {
+    fun init(context: Context, isDebug: Boolean = false) {
         Logger.setDebug(isDebug)
         Logger.d(TAG, "XRouter init")
         XRouterAppInit.init()
+        interceptorMapping.values.forEach { it.onInit(context) }
     }
 
     fun registerPage(pageName: String, routerPage: Class<out Activity>) {
@@ -34,6 +38,14 @@ object XRouter {
         methodMapping.put(methodName, routerMethod)
     }
 
+    fun registerInterceptor(priority: Int, routerInterceptor: XRouterInterceptor) {
+        Logger.d(TAG, "registerInterceptor:${routerInterceptor.javaClass.canonicalName}(priority=$priority)")
+        interceptorMapping.put(priority, routerInterceptor)
+
+        interceptorPriorityList.clear()
+        interceptorPriorityList.addAll(interceptorMapping.keys.sortedDescending())
+    }
+
     /**
      * recommend
      */
@@ -43,9 +55,43 @@ object XRouter {
     /**
      * page route
      */
-    fun jump(context: Context, routerConfig: XRouterConfig, routerCallBack: XRouterCallBack? = null) {
+    fun jump(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
         Logger.d(TAG, "start page route")
         Logger.d(TAG, "routerConfig:$routerConfig")
+        if (interceptorMapping.isNotEmpty()) {
+            interceptorIndex = 0
+            invokeInterceptor(routerConfig, routerCallback)
+        } else {
+            Logger.d(TAG, "interceptorMapping is empty")
+            invokeJump(routerConfig, routerCallback)
+        }
+    }
+
+    fun invokeInterceptor(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
+        interceptorMapping[interceptorPriorityList[interceptorIndex]]?.let {
+            Logger.d(TAG, "invoke interceptor:${it.javaClass.canonicalName}")
+            it.onIntercept(object : XRouterInterceptorCallback {
+                override fun onContinue() {
+                    Logger.d(TAG, "onContinue")
+                    if (interceptorIndex == interceptorMapping.size - 1) {
+                        invokeJump(routerConfig, routerCallback)
+                    } else {
+                        interceptorIndex++
+                        invokeInterceptor(routerConfig, routerCallback)
+                    }
+                }
+
+                override fun onInterrupt(msg: String) {
+                    Logger.w(TAG, "onInterrupt:$msg")
+                    routerCallback?.onRouterError(XRouterResult())
+                }
+
+            })
+        } ?: routerCallback?.onRouterError(XRouterResult())
+    }
+
+    fun invokeJump(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
+        Logger.d(TAG, "invoke jump")
         if (routerConfig.mTarget.isNotBlank()) {
             // get only scheme+authority+path
             var page = routerConfig.mTarget
@@ -58,11 +104,11 @@ object XRouter {
             if (pagesMapping.containsKey(page)) {
                 Logger.d(TAG, "find page success")
                 val intent = Intent().apply {
-                    setClass(context, pagesMapping[page])
+                    setClass(routerConfig.context, pagesMapping[page])
                     if (routerConfig.mIntentFlags != -1) {
                         flags = routerConfig.mIntentFlags
                     }
-                    if (context !is Activity) {
+                    if (routerConfig.context !is Activity) {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
                     if (page != routerConfig.mTarget) {
@@ -70,38 +116,47 @@ object XRouter {
                     }
                     putExtras(routerConfig.mData)
                 }
-                if (routerConfig.mRequestCode != -1 && context is Activity) {
-                    Logger.d(TAG, "startActivityForResult")
-                    context.startActivityForResult(intent, routerConfig.mRequestCode)
-                    routerCallBack?.onRouterSuccess(context)
+                if (routerConfig.context is Activity) {
+                    if (routerConfig.mRequestCode != -1) {
+                        Logger.d(TAG, "activity startActivityForResult")
+                        routerConfig.context.startActivityForResult(intent, routerConfig.mRequestCode)
+                    } else {
+                        Logger.d(TAG, "activity startActivity")
+                        routerConfig.context.startActivity(intent)
+                    }
+                    if (routerConfig.mEnterAnim != -1 && routerConfig.mExitAnim != -1) {
+                        Logger.d(TAG, "overridePendingTransition")
+                        routerConfig.context.overridePendingTransition(routerConfig.mEnterAnim, routerConfig.mExitAnim)
+                    }
+                    routerCallback?.onRouterSuccess(XRouterResult())
                 } else {
-                    Logger.d(TAG, "startActivity")
-                    context.startActivity(intent)
-                    routerCallBack?.onRouterSuccess(context)
+                    Logger.d(TAG, "context startActivity")
+                    routerConfig.context.startActivity(intent)
+                    routerCallback?.onRouterSuccess(XRouterResult())
                 }
             } else {
                 Logger.d(TAG, "find page error")
-                routerCallBack?.onRouterError(context)
+                routerCallback?.onRouterError(XRouterResult())
             }
         } else {
             Logger.d(TAG, "target is blank")
-            routerCallBack?.onRouterError(context)
+            routerCallback?.onRouterError(XRouterResult())
         }
     }
 
     /**
      * method route
      */
-    fun call(context: Context, routerConfig: XRouterConfig, routerCallBack: XRouterCallBack? = null) {
+    fun call(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
         Logger.d(TAG, "start method route")
         Logger.d(TAG, "routerConfig:$routerConfig")
         val targetService = methodMapping[routerConfig.mTarget]
         targetService?.let {
             Logger.d(TAG, "find method success")
-            it.invoke(context, routerConfig.mData, routerCallBack)
+            it.invoke(XRouterParams(routerConfig.context, routerConfig.mData, routerConfig.mAny, routerCallback))
         } ?: let {
             Logger.d(TAG, "find method error")
-            routerCallBack?.onRouterError(context)
+            routerCallback?.onRouterError(XRouterResult())
         }
     }
 

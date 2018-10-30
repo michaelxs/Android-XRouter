@@ -1,38 +1,44 @@
 package com.blue.routerb.service.kotlin
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.widget.Toast
-import com.blue.xrouter.XRouterCallBack
+import com.blue.xrouter.XRouterParams
+import com.blue.xrouter.XRouterResult
 import com.blue.xrouter.annotation.Router
 
 /**
+ * kotlin provides service
  * Created by blue on 2018/9/28.
  */
 object TestBRouterService {
 
     @JvmStatic
     @Router("toast_kotlin")
-    fun toast(context: Context, data: Bundle, callBack: XRouterCallBack?) {
-        Toast.makeText(context, "toast from other module", Toast.LENGTH_SHORT).show()
+    fun toast(routerParams: XRouterParams) {
+        with(routerParams) {
+            Toast.makeText(context, "toast from other module", Toast.LENGTH_SHORT).show()
+        }
     }
 
     @JvmStatic
     @Router("getSum_kotlin")
-    fun getSum(context: Context, data: Bundle, callBack: XRouterCallBack?) {
-        val a = data.getInt("a")
-        val b = data.getInt("b")
-        val result = a + b
+    fun getSum(routerParams: XRouterParams) {
+        with(routerParams) {
+            val a = data.getInt("a")
+            val b = data.getInt("b")
+            val result = a + b
 
-        data.putInt("result", result)
-        callBack?.onRouterSuccess(context, data)
+            callback?.onRouterSuccess(XRouterResult(Bundle().apply { putInt("result", result) }))
+        }
     }
 
     @JvmStatic
     @Router("getFragment_kotlin")
-    fun getFragment(context: Context, data: Bundle, callBack: XRouterCallBack?) {
-        val fragment = Fragment()
-        callBack?.onRouterSuccess(context, data, fragment)
+    fun getFragment(routerParams: XRouterParams) {
+        with(routerParams) {
+            val fragment = Fragment()
+            callback?.onRouterSuccess(XRouterResult(obj = fragment))
+        }
     }
 }

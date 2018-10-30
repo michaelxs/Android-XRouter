@@ -99,7 +99,7 @@ public class RouterProcessor extends AbstractProcessor {
                 String[] moduleNames = modules.split("[,]");
                 for (String module : moduleNames) {
                     debug("add module:" + module);
-                    initMethod.addStatement("com.blue.xrouter.tools.Logger.INSTANCE.d($S, $S)", "XRouter", "init " + module);
+                    initMethod.addStatement("com.blue.xrouter.tools.Logger.INSTANCE.d($S, $S)", "XRouter", "------ init " + module + " ------");
                     initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerPage()");
                     initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerMethod()");
                 }
@@ -142,8 +142,8 @@ public class RouterProcessor extends AbstractProcessor {
                     for (String target : router.value()) {
                         registerMethod.addStatement("com.blue.xrouter.XRouter.INSTANCE.registerMethod($S, " +
                                 "new XRouterMethod() {\n" +
-                                "   public void invoke(android.content.Context context, android.os.Bundle data, com.blue.xrouter.XRouterCallBack callBack) {\n" +
-                                "       $T.$N(context, data, callBack);\n" +
+                                "   public void invoke(com.blue.xrouter.XRouterParams routerParams) {\n" +
+                                "       $T.$N(routerParams);\n" +
                                 "   }\n" +
                                 "}) ", target, typeElement.asType(), element.getSimpleName());
                     }

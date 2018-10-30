@@ -16,7 +16,8 @@ import android.widget.Toast;
 import com.blue.routera.R;
 import com.blue.routera.databinding.RouteraActivityMainBinding;
 import com.blue.xrouter.XRouter;
-import com.blue.xrouter.XRouterCallBack;
+import com.blue.xrouter.XRouterCallback;
+import com.blue.xrouter.XRouterResult;
 import com.blue.xrouter.annotation.Router;
 
 import org.jetbrains.annotations.NotNull;
@@ -49,11 +50,13 @@ public class RouterAActivity extends AppCompatActivity {
                     case 0:
                         XRouter.with(context)
                                 .target("www.RouterBActivity.com")
+                                .intentFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                                 .jump();
                         break;
                     case 1:
                         XRouter.with(context)
                                 .target("hello.world")
+                                .transition(android.R.anim.fade_in, android.R.anim.fade_out)
                                 .jump();
                         break;
                     case 2:
@@ -66,18 +69,20 @@ public class RouterAActivity extends AppCompatActivity {
                                 .target("hello.world")
                                 .data("name", "blue")
                                 .data("age", 18)
+                                .any(new Fragment())
                                 .jump();
                         break;
                     case 4:
                         XRouter.with(context)
                                 .target("www.google.com")
-                                .jump(new XRouterCallBack() {
+                                .jump(new XRouterCallback() {
                                     @Override
-                                    public void onRouterSuccess(@NotNull Context context, @Nullable Bundle data) {
+                                    public void onRouterSuccess(@NotNull XRouterResult routerResult) {
+
                                     }
 
                                     @Override
-                                    public void onRouterError(@NotNull Context context) {
+                                    public void onRouterError(@NotNull XRouterResult routerResult) {
                                         Toast.makeText(context, "target activity is not find", Toast.LENGTH_SHORT).show();
                                     }
                                 });
@@ -99,11 +104,11 @@ public class RouterAActivity extends AppCompatActivity {
                                 .target("getSum_java")
                                 .data("a", 1)
                                 .data("b", 2)
-                                .call(new XRouterCallBack() {
+                                .call(new XRouterCallback() {
                                     @Override
-                                    public void onRouterSuccess(@NotNull Context context, @Nullable Bundle data) {
-                                        if (data != null) {
-                                            binding.tv.setText(String.format("getSum() result is : %s", data.getInt("result")));
+                                    public void onRouterSuccess(@NotNull XRouterResult routerResult) {
+                                        if (routerResult.getData() != null) {
+                                            binding.tv.setText(String.format("getSum() result is : %s", routerResult.getData().getInt("result")));
                                         }
                                     }
                                 });
@@ -111,15 +116,11 @@ public class RouterAActivity extends AppCompatActivity {
                     case 8:
                         XRouter.with(context)
                                 .target("getFragment_java")
-                                .call(new XRouterCallBack() {
+                                .call(new XRouterCallback() {
                                     @Override
-                                    public void onRouterSuccess(@NotNull Context context, @Nullable Bundle data) {
-                                    }
-
-                                    @Override
-                                    public void onRouterSuccess(@NotNull Context context, @Nullable Bundle data, @Nullable Object others) {
-                                        if (others != null && others instanceof Fragment) {
-                                            Fragment fragment = (Fragment) others;
+                                    public void onRouterSuccess(@NotNull XRouterResult routerResult) {
+                                        if (routerResult.getObj() != null && routerResult.getObj() instanceof Fragment) {
+                                            Fragment fragment = (Fragment) routerResult.getObj();
                                             binding.tv.setText(String.format("getFragment() result is : %s", fragment));
                                         }
                                     }
