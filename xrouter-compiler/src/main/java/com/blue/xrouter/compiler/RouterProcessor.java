@@ -2,6 +2,7 @@ package com.blue.xrouter.compiler;
 
 import com.blue.xrouter.annotation.Router;
 import com.blue.xrouter.annotation.RouterApp;
+import com.blue.xrouter.annotation.RouterInterceptor;
 import com.google.auto.service.AutoService;
 import com.squareup.javapoet.JavaFile;
 import com.squareup.javapoet.MethodSpec;
@@ -68,6 +69,7 @@ public class RouterProcessor extends AbstractProcessor {
         Set<String> ret = new HashSet<>();
         ret.add(RouterApp.class.getCanonicalName());
         ret.add(Router.class.getCanonicalName());
+        ret.add(RouterInterceptor.class.getCanonicalName());
         return ret;
     }
 
@@ -83,7 +85,7 @@ public class RouterProcessor extends AbstractProcessor {
         }
         debug("process apt with " + set.toString());
         generateRouterApp(roundEnvironment);
-        generateRouter(roundEnvironment);
+        generateRouterModule(roundEnvironment);
 
         return true;
     }
@@ -102,16 +104,17 @@ public class RouterProcessor extends AbstractProcessor {
                     initMethod.addStatement("com.blue.xrouter.tools.Logger.INSTANCE.d($S, $S)", "XRouter", "------ init " + module + " ------");
                     initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerPage()");
                     initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerMethod()");
+                    initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerInterceptor()");
                 }
             }
 
-            TypeSpec routerMapping = TypeSpec.classBuilder(XROUTER_APP_INIT)
+            TypeSpec routerAppInit = TypeSpec.classBuilder(XROUTER_APP_INIT)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addMethod(initMethod.build())
                     .build();
 
             try {
-                JavaFile.builder(PACKAGE_NAME, routerMapping).build().writeTo(filer);
+                JavaFile.builder(PACKAGE_NAME, routerAppInit).build().writeTo(filer);
                 debug("generateRouterApp success");
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -120,47 +123,69 @@ public class RouterProcessor extends AbstractProcessor {
         }
     }
 
-    private void generateRouter(RoundEnvironment roundEnvironment) {
+    private void generateRouterModule(RoundEnvironment roundEnvironment) {
         Set<? extends Element> routerList = roundEnvironment.getElementsAnnotatedWith(Router.class);
-        if (routerList != null && routerList.size() > 0 && !moduleName.isEmpty()) {
-            debug("generateRouter");
+        Set<? extends Element> routerInterceptorList = roundEnvironment.getElementsAnnotatedWith(RouterInterceptor.class);
+        if (!moduleName.isEmpty()) {
+            debug("generateRouterModule");
             MethodSpec.Builder registerPage = MethodSpec.methodBuilder("registerPage")
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
 
             MethodSpec.Builder registerMethod = MethodSpec.methodBuilder("registerMethod")
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
 
-            for (Element element : routerList) {
-                Router router = element.getAnnotation(Router.class);
-                if (element.getKind() == ElementKind.CLASS) {
-                    TypeElement typeElement = (TypeElement) element;
-                    for (String target : router.value()) {
-                        registerPage.addStatement("com.blue.xrouter.XRouter.INSTANCE.registerPage($S, $T.class)", target, typeElement.asType());
+            MethodSpec.Builder registerInterceptor = MethodSpec.methodBuilder("registerInterceptor")
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
+
+            if (routerList != null && routerList.size() > 0) {
+                debug("generateRouter");
+                for (Element element : routerList) {
+                    Router router = element.getAnnotation(Router.class);
+                    if (element.getKind() == ElementKind.CLASS) {
+                        TypeElement typeElement = (TypeElement) element;
+                        for (String target : router.value()) {
+                            registerPage.addStatement("com.blue.xrouter.XRouter.INSTANCE.registerPage($S, $T.class)", target, typeElement.asType());
+                        }
+                    } else if (element.getKind() == ElementKind.METHOD) {
+                        TypeElement typeElement = (TypeElement) element.getEnclosingElement();
+                        for (String target : router.value()) {
+                            registerMethod.addStatement("com.blue.xrouter.XRouter.INSTANCE.registerMethod($S, " +
+                                    "new XRouterMethod() {\n" +
+                                    "   public void invoke(com.blue.xrouter.XRouterParams routerParams) {\n" +
+                                    "       $T.$N(routerParams);\n" +
+                                    "   }\n" +
+                                    "}) ", target, typeElement.asType(), element.getSimpleName());
+                        }
+                    } else {
+                        error("process Router by unknown type");
                     }
-                } else if (element.getKind() == ElementKind.METHOD) {
-                    TypeElement typeElement = (TypeElement) element.getEnclosingElement();
-                    for (String target : router.value()) {
-                        registerMethod.addStatement("com.blue.xrouter.XRouter.INSTANCE.registerMethod($S, " +
-                                "new XRouterMethod() {\n" +
-                                "   public void invoke(com.blue.xrouter.XRouterParams routerParams) {\n" +
-                                "       $T.$N(routerParams);\n" +
-                                "   }\n" +
-                                "}) ", target, typeElement.asType(), element.getSimpleName());
-                    }
-                } else {
-                    error("process router by unknown type");
                 }
             }
 
-            TypeSpec routerMapping = TypeSpec.classBuilder(XROUTER_MODULE_INIT + moduleName)
+            if (routerInterceptorList != null && routerInterceptorList.size() > 0) {
+                debug("generateRouterInterceptor");
+                for (Element element : routerInterceptorList) {
+                    RouterInterceptor routerInterceptor = element.getAnnotation(RouterInterceptor.class);
+                    if (element.getKind() == ElementKind.CLASS) {
+                        TypeElement typeElement = (TypeElement) element;
+                        int target = routerInterceptor.priority();
+                        registerInterceptor.addStatement("com.blue.xrouter.XRouter.INSTANCE.registerInterceptor($L, new $T())", target, typeElement.asType());
+                    } else {
+                        error("process RouterInterceptor by unknown type");
+                    }
+                }
+            }
+
+            TypeSpec routerInit = TypeSpec.classBuilder(XROUTER_MODULE_INIT + moduleName)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addMethod(registerPage.build())
                     .addMethod(registerMethod.build())
+                    .addMethod(registerInterceptor.build())
                     .build();
 
             try {
-                JavaFile.builder(PACKAGE_NAME, routerMapping).build().writeTo(filer);
-                debug("generateRouter success");
+                JavaFile.builder(PACKAGE_NAME, routerInit).build().writeTo(filer);
+                debug("generateRouterModule success");
             } catch (Throwable e) {
                 e.printStackTrace();
                 error(e.getMessage());

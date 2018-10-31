@@ -9,5 +9,5 @@ interface XRouterInterceptor {
 
     fun onInit(context: Context)
 
-    fun onIntercept(callback: XRouterInterceptorCallback)
+    fun onProcess(callback: XRouterInterceptorCallback)
 }

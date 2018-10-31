@@ -12,8 +12,6 @@ class BaseApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        XRouter.registerInterceptor(5, LoginInterceptor())
-        XRouter.registerInterceptor(8, LoginInterceptor2())
         XRouter.init(this, BuildConfig.DEBUG)
     }
 }

@@ -16,7 +16,7 @@ object XRouter {
 
     private val pagesMapping by lazy { mutableMapOf<String, Class<out Activity>>() }
     private val methodMapping by lazy { mutableMapOf<String, XRouterMethod>() }
-    private val interceptorMapping by lazy { mutableMapOf<Int, XRouterInterceptor>() }
+    private val interceptorMap by lazy { mutableMapOf<Int, XRouterInterceptor>() }
     private val interceptorPriorityList by lazy { mutableListOf<Int>() }
     private var interceptorIndex = 0
 
@@ -25,7 +25,7 @@ object XRouter {
         Logger.setDebug(isDebug)
         Logger.d(TAG, "XRouter init")
         XRouterAppInit.init()
-        interceptorMapping.values.forEach { it.onInit(context) }
+        interceptorMap.values.forEach { it.onInit(context) }
     }
 
     fun registerPage(pageName: String, routerPage: Class<out Activity>) {
@@ -40,10 +40,10 @@ object XRouter {
 
     fun registerInterceptor(priority: Int, routerInterceptor: XRouterInterceptor) {
         Logger.d(TAG, "registerInterceptor:${routerInterceptor.javaClass.canonicalName}(priority=$priority)")
-        interceptorMapping.put(priority, routerInterceptor)
+        interceptorMap.put(priority, routerInterceptor)
 
         interceptorPriorityList.clear()
-        interceptorPriorityList.addAll(interceptorMapping.keys.sortedDescending())
+        interceptorPriorityList.addAll(interceptorMap.keys.sortedDescending())
     }
 
     /**
@@ -58,31 +58,31 @@ object XRouter {
     fun jump(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
         Logger.d(TAG, "start page route")
         Logger.d(TAG, "routerConfig:$routerConfig")
-        if (interceptorMapping.isNotEmpty()) {
+        if (interceptorMap.isNotEmpty()) {
             interceptorIndex = 0
-            invokeInterceptor(routerConfig, routerCallback)
+            invokeIntercept(routerConfig, routerCallback)
         } else {
-            Logger.d(TAG, "interceptorMapping is empty")
+            Logger.d(TAG, "interceptorMap is empty")
             invokeJump(routerConfig, routerCallback)
         }
     }
 
-    fun invokeInterceptor(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
-        interceptorMapping[interceptorPriorityList[interceptorIndex]]?.let {
-            Logger.d(TAG, "invoke interceptor:${it.javaClass.canonicalName}")
-            it.onIntercept(object : XRouterInterceptorCallback {
+    fun invokeIntercept(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
+        interceptorMap[interceptorPriorityList[interceptorIndex]]?.let {
+            Logger.d(TAG, "invoke intercept:${it.javaClass.canonicalName}")
+            it.onProcess(object : XRouterInterceptorCallback {
                 override fun onContinue() {
                     Logger.d(TAG, "onContinue")
-                    if (interceptorIndex == interceptorMapping.size - 1) {
+                    if (interceptorIndex == interceptorMap.size - 1) {
                         invokeJump(routerConfig, routerCallback)
                     } else {
                         interceptorIndex++
-                        invokeInterceptor(routerConfig, routerCallback)
+                        invokeIntercept(routerConfig, routerCallback)
                     }
                 }
 
-                override fun onInterrupt(msg: String) {
-                    Logger.w(TAG, "onInterrupt:$msg")
+                override fun onIntercept(msg: String) {
+                    Logger.w(TAG, "onIntercept:$msg")
                     routerCallback?.onRouterError(XRouterResult())
                 }
 

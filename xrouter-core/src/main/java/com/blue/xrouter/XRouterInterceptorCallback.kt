@@ -7,5 +7,5 @@ interface XRouterInterceptorCallback {
 
     fun onContinue()
 
-    fun onInterrupt(msg: String)
+    fun onIntercept(msg: String)
 }
