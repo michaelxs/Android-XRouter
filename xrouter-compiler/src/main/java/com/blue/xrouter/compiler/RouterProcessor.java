@@ -33,16 +33,16 @@ public class RouterProcessor extends AbstractProcessor {
 
     private static final boolean DEBUG = true;
     private static final String PACKAGE_NAME = "com.blue.xrouter";
-    private static final String XROUTER_MODULES = "XRouterModules";
-    private static final String XROUTER_MODULE_NAME = "XRouterModuleName";
+    private static final String XROUTER_APP = "XRouterApp";
+    private static final String XROUTER_MODULE = "XRouterModule";
 
     private static final String XROUTER_APP_INIT = "XRouterAppInit";
     private static final String XROUTER_MODULE_INIT = "XRouterModuleInit_";
 
     private Messager messager;
     private Filer filer;
-    private String modules = "";
-    private String moduleName = "";
+    private String routerApp = "";
+    private String routerModule = "";
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
@@ -52,16 +52,16 @@ public class RouterProcessor extends AbstractProcessor {
         Map<String, String> map = processingEnv.getOptions();
         Set<String> keys = map.keySet();
         for (String key : keys) {
-            if (XROUTER_MODULES.equals(key)) {
-                this.modules = map.get(key);
+            if (XROUTER_APP.equals(key)) {
+                this.routerApp = map.get(key);
             }
-            if (XROUTER_MODULE_NAME.equals(key)) {
-                this.moduleName = map.get(key);
+            if (XROUTER_MODULE.equals(key)) {
+                this.routerModule = map.get(key);
             }
         }
         debug("apt init");
-        debug("modules:" + modules);
-        debug("moduleName:" + moduleName);
+        debug("XRouterApp:" + routerApp);
+        debug("XRouterModule:" + routerModule);
     }
 
     @Override
@@ -97,11 +97,11 @@ public class RouterProcessor extends AbstractProcessor {
             MethodSpec.Builder initMethod = MethodSpec.methodBuilder("init")
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
 
-            if (!modules.isEmpty()) {
-                String[] moduleNames = modules.split("[,]");
+            if (!routerApp.isEmpty()) {
+                String[] moduleNames = routerApp.split("[,]");
                 for (String module : moduleNames) {
                     debug("add module:" + module);
-                    initMethod.addStatement("com.blue.xrouter.tools.Logger.INSTANCE.d($S, $S)", "XRouter", "------ init " + module + " ------");
+                    initMethod.addStatement("com.blue.xrouter.tools.Logger.INSTANCE.d($S, $S)", "XRouter", "--- init module:" + module + " ---");
                     initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerPage()");
                     initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerMethod()");
                     initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerInterceptor()");
@@ -126,7 +126,7 @@ public class RouterProcessor extends AbstractProcessor {
     private void generateRouterModule(RoundEnvironment roundEnvironment) {
         Set<? extends Element> routerList = roundEnvironment.getElementsAnnotatedWith(Router.class);
         Set<? extends Element> routerInterceptorList = roundEnvironment.getElementsAnnotatedWith(RouterInterceptor.class);
-        if (!moduleName.isEmpty()) {
+        if (!routerModule.isEmpty()) {
             debug("generateRouterModule");
             MethodSpec.Builder registerPage = MethodSpec.methodBuilder("registerPage")
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
@@ -176,7 +176,7 @@ public class RouterProcessor extends AbstractProcessor {
                 }
             }
 
-            TypeSpec routerInit = TypeSpec.classBuilder(XROUTER_MODULE_INIT + moduleName)
+            TypeSpec routerInit = TypeSpec.classBuilder(XROUTER_MODULE_INIT + routerModule)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addMethod(registerPage.build())
                     .addMethod(registerMethod.build())

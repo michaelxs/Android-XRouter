@@ -56,7 +56,7 @@ object XRouter {
      * page route
      */
     fun jump(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
-        Logger.d(TAG, "start page route")
+        Logger.d(TAG, "--- start page route ---")
         Logger.d(TAG, "routerConfig:$routerConfig")
         if (interceptorMap.isNotEmpty()) {
             interceptorIndex = 0
@@ -69,7 +69,7 @@ object XRouter {
 
     fun invokeIntercept(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
         interceptorMap[interceptorPriorityList[interceptorIndex]]?.let {
-            Logger.d(TAG, "invoke intercept:${it.javaClass.canonicalName}")
+            Logger.d(TAG, "invoke intercept:${it.javaClass.canonicalName}(priority=${interceptorPriorityList[interceptorIndex]})")
             it.onProcess(object : XRouterInterceptorCallback {
                 override fun onContinue() {
                     Logger.d(TAG, "onContinue")
@@ -148,7 +148,7 @@ object XRouter {
      * method route
      */
     fun call(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
-        Logger.d(TAG, "start method route")
+        Logger.d(TAG, "--- start method route ---")
         Logger.d(TAG, "routerConfig:$routerConfig")
         val targetService = methodMapping[routerConfig.mTarget]
         targetService?.let {

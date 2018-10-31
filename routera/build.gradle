@@ -37,6 +37,6 @@ dependencies {
 
 kapt {
     arguments {
-        arg("XRouterModuleName", project.getName())
+        arg("XRouterModule", project.getName())
     }
 }

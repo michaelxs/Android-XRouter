@@ -59,16 +59,16 @@ dependencies {
 
 kapt {
     arguments {
-        arg("XRouterModuleName", project.getName())
+        arg("XRouterModule", project.getName())
         switch (BUILD_TYPE) {
             case "all":
-                arg("XRouterModules", project.getName() + ",routera,routerb")
+                arg("XRouterApp", project.getName() + ",routera,routerb")
                 break
             case "routera":
-                arg("XRouterModules", "routera")
+                arg("XRouterApp", "routera")
                 break
             case "routerb":
-                arg("XRouterModules", "routerb")
+                arg("XRouterApp", "routerb")
                 break
         }
     }
