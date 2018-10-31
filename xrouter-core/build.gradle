@@ -2,6 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion 26
@@ -28,4 +29,17 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
     api project(':xrouter-annotation')
     compileOnly project(':xrouter-compileonly')
+}
+
+publish {
+    userOrg = 'andrew007vip007'
+    groupId = 'com.xuyefeng'
+    artifactId = 'xrouter-core'
+    publishVersion = '1.0.0'
+    desc = 'This is a lightweight and simple routing framework that provides jump routing and method routing.'
+    website = 'https://github.com/michaelxs/Android-XRouter.git'
+}
+
+tasks.withType(Javadoc) {
+    enabled = false
 }

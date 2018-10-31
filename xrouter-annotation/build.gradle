@@ -1,4 +1,5 @@
 apply plugin: 'java-library'
+apply plugin: 'com.novoda.bintray-release'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -6,3 +7,16 @@ dependencies {
 
 sourceCompatibility = "1.7"
 targetCompatibility = "1.7"
+
+publish {
+    userOrg = 'andrew007vip007'
+    groupId = 'com.xuyefeng'
+    artifactId = 'xrouter-annotation'
+    publishVersion = '1.0.0'
+    desc = 'This is a lightweight and simple routing framework that provides jump routing and method routing.'
+    website = 'https://github.com/michaelxs/Android-XRouter.git'
+}
+
+tasks.withType(Javadoc) {
+    enabled = false
+}
