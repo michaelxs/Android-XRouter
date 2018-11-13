@@ -42,17 +42,17 @@ dependencies {
 
     switch (BUILD_TYPE) {
         case "all":
-            println "=====implementation project : routera、routerb"
-            implementation project(':routera')
-            implementation project(':routerb')
+            println "=====implementation project : module-a、module-b"
+            implementation project(':module-a')
+            implementation project(':module-b')
             break
         case "routera":
-            println "=====implementation project : routera"
-            implementation project(':routera')
+            println "=====implementation project : module-a"
+            implementation project(':module-a')
             break
         case "routerb":
-            println "=====implementation project : routerb"
-            implementation project(':routerb')
+            println "=====implementation project : module-b"
+            implementation project(':module-b')
             break
     }
 }
@@ -62,13 +62,13 @@ kapt {
         arg("XRouterModule", project.getName())
         switch (BUILD_TYPE) {
             case "all":
-                arg("XRouterApp", project.getName() + ",routera,routerb")
+                arg("XRouterApp", project.getName() + ",modulea,moduleb")
                 break
             case "routera":
-                arg("XRouterApp", "routera")
+                arg("XRouterApp", "modulea")
                 break
             case "routerb":
-                arg("XRouterApp", "routerb")
+                arg("XRouterApp", "moduleb")
                 break
         }
     }
