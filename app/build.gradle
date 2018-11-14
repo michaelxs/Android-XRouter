@@ -46,11 +46,11 @@ dependencies {
             implementation project(':module-a')
             implementation project(':module-b')
             break
-        case "routera":
+        case "a":
             println "=====implementation project : module-a"
             implementation project(':module-a')
             break
-        case "routerb":
+        case "b":
             println "=====implementation project : module-b"
             implementation project(':module-b')
             break
@@ -64,10 +64,10 @@ kapt {
             case "all":
                 arg("XRouterApp", project.getName() + ",modulea,moduleb")
                 break
-            case "routera":
+            case "a":
                 arg("XRouterApp", "modulea")
                 break
-            case "routerb":
+            case "b":
                 arg("XRouterApp", "moduleb")
                 break
         }
