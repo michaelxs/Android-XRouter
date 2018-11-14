@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
         btn.setOnClickListener {
             // start activity in module routera
             XRouter.with(this)
-                    .target("java.RouterAActivity.com")
+                    .target("www.JavaModuleActivity.com")
                     .jump()
         }
 
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         btn2.setOnClickListener {
             // start activity in module routera
             XRouter.with(this)
-                    .target("kotlin.RouterAActivity.com")
+                    .target("www.KotlinModuleActivity.com")
                     .jump()
         }
     }

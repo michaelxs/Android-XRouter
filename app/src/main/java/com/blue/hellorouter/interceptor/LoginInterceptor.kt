@@ -17,8 +17,8 @@ class LoginInterceptor : XRouterInterceptor {
 
     override fun onProcess(callback: XRouterInterceptorCallback) {
         // check login status
-//        callback.onContinue()
-        callback.onIntercept("check login error")
+        callback.onContinue()
+//        callback.onIntercept("check login error")
     }
 
 }
