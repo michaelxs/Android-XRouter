@@ -114,17 +114,11 @@ public class JavaModuleActivity extends AppCompatActivity {
                                 });
                         break;
                     case 8:
-                        XRouter.with(context)
-                                .target("getFragment_java")
-                                .call(new XRouterCallback() {
-                                    @Override
-                                    public void onRouterSuccess(@NotNull XRouterResult routerResult) {
-                                        if (routerResult.getObj() != null && routerResult.getObj() instanceof Fragment) {
-                                            Fragment fragment = (Fragment) routerResult.getObj();
-                                            binding.tv.setText(String.format("getFragment() result is : %s", fragment));
-                                        }
-                                    }
-                                });
+                        XRouterResult result = XRouter.with(context).target("getFragment_java").get();
+                        if (result.getObj() != null && result.getObj() instanceof Fragment) {
+                            Fragment fragment = (Fragment) result.getObj();
+                            binding.tv.setText(String.format("getFragment() result is : %s", fragment));
+                        }
                         break;
                 }
             }
@@ -134,14 +128,14 @@ public class JavaModuleActivity extends AppCompatActivity {
     private List<String> getListData() {
         List<String> data = new ArrayList<>();
         data.add("route ModuleBActivity\nby \"www.RouterBActivity.com\"");
-        data.add("route ModuleBActivity\nby \"hello.world\"");
+        data.add("route ModuleBActivity\nby \"hello.world\" with transition");
         data.add("route ModuleBActivity with data in url");
         data.add("route ModuleBActivity with data in bundle");
         data.add("route ModuleBActivity with callback");
         data.add("route ModuleBActivity for result");
-        data.add("route method : toast()");
-        data.add("route method : getSum()\nwith params and callback");
-        data.add("route method : getFragment()\nwith callback");
+        data.add("route method async : toast()");
+        data.add("route method async : getSum()\nwith params and callback");
+        data.add("route method sync : getFragment()");
         return data;
     }
 

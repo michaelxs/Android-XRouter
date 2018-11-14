@@ -15,7 +15,10 @@ object XRouter {
     private val TAG = "XRouter"
 
     private val pagesMapping by lazy { mutableMapOf<String, Class<out Activity>>() }
-    private val methodMapping by lazy { mutableMapOf<String, XRouterMethod>() }
+
+    private val syncMethodMapping by lazy { mutableMapOf<String, XRouterSyncMethod>() }
+    private val asyncMethodMapping by lazy { mutableMapOf<String, XRouterAsyncMethod>() }
+
     private val interceptorMap by lazy { mutableMapOf<Int, XRouterInterceptor>() }
     private val interceptorPriorityList by lazy { mutableListOf<Int>() }
     private var interceptorIndex = 0
@@ -33,9 +36,14 @@ object XRouter {
         pagesMapping.put(pageName, routerPage)
     }
 
-    fun registerMethod(methodName: String, routerMethod: XRouterMethod) {
-        Logger.d(TAG, "registerMethod:$methodName")
-        methodMapping.put(methodName, routerMethod)
+    fun registerSyncMethod(methodName: String, routerMethod: XRouterSyncMethod) {
+        Logger.d(TAG, "registerSyncMethod:$methodName")
+        syncMethodMapping.put(methodName, routerMethod)
+    }
+
+    fun registerAsyncMethod(methodName: String, routerMethod: XRouterAsyncMethod) {
+        Logger.d(TAG, "registerAsyncMethod:$methodName")
+        asyncMethodMapping.put(methodName, routerMethod)
     }
 
     fun registerInterceptor(priority: Int, routerInterceptor: XRouterInterceptor) {
@@ -145,18 +153,34 @@ object XRouter {
     }
 
     /**
-     * method route
+     * method async route
      */
     fun call(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
-        Logger.d(TAG, "--- start method route ---")
+        Logger.d(TAG, "--- start method async route ---")
         Logger.d(TAG, "routerConfig:$routerConfig")
-        val targetService = methodMapping[routerConfig.mTarget]
+        val targetService = asyncMethodMapping[routerConfig.mTarget]
         targetService?.let {
             Logger.d(TAG, "find method success")
-            it.invoke(XRouterParams(routerConfig.context, routerConfig.mData, routerConfig.mAny, routerCallback))
+            it.invoke(routerConfig.context, XRouterParams(routerConfig.mData, routerConfig.mAny), routerCallback)
         } ?: let {
             Logger.d(TAG, "find method error")
             routerCallback?.onRouterError(XRouterResult())
+        }
+    }
+
+    /**
+     * method sync route
+     */
+    fun get(routerConfig: XRouterConfig): XRouterResult {
+        Logger.d(TAG, "--- start method sync route ---")
+        Logger.d(TAG, "routerConfig:$routerConfig")
+        val targetService = syncMethodMapping[routerConfig.mTarget]
+        targetService?.let {
+            Logger.d(TAG, "find method success")
+            return it.invoke(routerConfig.context, XRouterParams(routerConfig.mData, routerConfig.mAny))
+        } ?: let {
+            Logger.d(TAG, "find method error")
+            return XRouterResult()
         }
     }
 
@@ -172,5 +196,5 @@ object XRouter {
     }
 
     @JvmStatic
-    fun containsMethod(target: String) = methodMapping.containsKey(target)
+    fun containsMethod(target: String) = !(!syncMethodMapping.containsKey(target) && !asyncMethodMapping.containsKey(target))
 }

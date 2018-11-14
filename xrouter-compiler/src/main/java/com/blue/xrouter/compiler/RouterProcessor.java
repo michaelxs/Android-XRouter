@@ -103,7 +103,8 @@ public class RouterProcessor extends AbstractProcessor {
                     debug("add module:" + module);
                     initMethod.addStatement("com.blue.xrouter.tools.Logger.INSTANCE.d($S, $S)", "XRouter", "--- init module:" + module + " ---");
                     initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerPage()");
-                    initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerMethod()");
+                    initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerSyncMethod()");
+                    initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerAsyncMethod()");
                     initMethod.addStatement(XROUTER_MODULE_INIT + module + ".registerInterceptor()");
                 }
             }
@@ -131,7 +132,10 @@ public class RouterProcessor extends AbstractProcessor {
             MethodSpec.Builder registerPage = MethodSpec.methodBuilder("registerPage")
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
 
-            MethodSpec.Builder registerMethod = MethodSpec.methodBuilder("registerMethod")
+            MethodSpec.Builder registerSyncMethod = MethodSpec.methodBuilder("registerSyncMethod")
+                    .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
+
+            MethodSpec.Builder registerAsyncMethod = MethodSpec.methodBuilder("registerAsyncMethod")
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL, Modifier.STATIC);
 
             MethodSpec.Builder registerInterceptor = MethodSpec.methodBuilder("registerInterceptor")
@@ -149,12 +153,21 @@ public class RouterProcessor extends AbstractProcessor {
                     } else if (element.getKind() == ElementKind.METHOD) {
                         TypeElement typeElement = (TypeElement) element.getEnclosingElement();
                         for (String target : router.value()) {
-                            registerMethod.addStatement("com.blue.xrouter.XRouter.INSTANCE.registerMethod($S, " +
-                                    "new XRouterMethod() {\n" +
-                                    "   public void invoke(com.blue.xrouter.XRouterParams routerParams) {\n" +
-                                    "       $T.$N(routerParams);\n" +
-                                    "   }\n" +
-                                    "}) ", target, typeElement.asType(), element.getSimpleName());
+                            if (router.async()) {
+                                registerAsyncMethod.addStatement("com.blue.xrouter.XRouter.INSTANCE.registerAsyncMethod($S, " +
+                                        "new XRouterAsyncMethod() {\n" +
+                                        "   public void invoke(android.content.Context context, com.blue.xrouter.XRouterParams routerParams, XRouterCallback callback) {\n" +
+                                        "       $T.$N(context, routerParams, callback);\n" +
+                                        "   }\n" +
+                                        "}) ", target, typeElement.asType(), element.getSimpleName());
+                            } else {
+                                registerSyncMethod.addStatement("com.blue.xrouter.XRouter.INSTANCE.registerSyncMethod($S, " +
+                                        "new XRouterSyncMethod() {\n" +
+                                        "   public XRouterResult invoke(android.content.Context context, com.blue.xrouter.XRouterParams routerParams) {\n" +
+                                        "       return $T.$N(context, routerParams);\n" +
+                                        "   }\n" +
+                                        "}) ", target, typeElement.asType(), element.getSimpleName());
+                            }
                         }
                     } else {
                         error("process Router by unknown type");
@@ -179,7 +192,8 @@ public class RouterProcessor extends AbstractProcessor {
             TypeSpec routerInit = TypeSpec.classBuilder(XROUTER_MODULE_INIT + routerModule)
                     .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                     .addMethod(registerPage.build())
-                    .addMethod(registerMethod.build())
+                    .addMethod(registerSyncMethod.build())
+                    .addMethod(registerAsyncMethod.build())
                     .addMethod(registerInterceptor.build())
                     .build();
 

@@ -13,4 +13,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.CLASS)
 public @interface Router {
     String[] value();
+
+    boolean async() default false;
 }

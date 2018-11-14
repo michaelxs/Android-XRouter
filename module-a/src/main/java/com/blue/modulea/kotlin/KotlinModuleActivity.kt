@@ -93,17 +93,12 @@ class KotlinModuleActivity : AppCompatActivity() {
                             })
                 }
                 8 -> {
-                    XRouter.with(this)
-                            .target("getFragment_kotlin")
-                            .call(object : XRouterCallback() {
-                                override fun onRouterSuccess(routerResult: XRouterResult) {
-                                    routerResult.obj?.let {
-                                        if (it is Fragment) {
-                                            binding.tv.text = String.format("getFragment() result is : %s", it)
-                                        }
-                                    }
-                                }
-                            })
+                    val result = XRouter.with(this).target("getFragment_kotlin").get()
+                    result.obj?.let {
+                        if (it is Fragment) {
+                            binding.tv.text = String.format("getFragment() result is : %s", it)
+                        }
+                    }
                 }
             }
         }
@@ -112,14 +107,14 @@ class KotlinModuleActivity : AppCompatActivity() {
     private fun getListData(): MutableList<String> {
         val data = mutableListOf<String>()
         data.add("route ModuleBActivity\nby \"www.RouterBActivity.com\"")
-        data.add("route ModuleBActivity\nby \"hello.world\"")
+        data.add("route ModuleBActivity\nby \"hello.world\" with transition")
         data.add("route ModuleBActivity with data in url")
         data.add("route ModuleBActivity with data in bundle")
         data.add("route ModuleBActivity with callback")
         data.add("route ModuleBActivity for result")
-        data.add("route method : toast()")
-        data.add("route method : getSum()\nwith params and callback")
-        data.add("route method : getFragment()\nwith callback")
+        data.add("route method async : toast()")
+        data.add("route method async : getSum()\nwith params and callback")
+        data.add("route method sync : getFragment()")
         return data
     }
 

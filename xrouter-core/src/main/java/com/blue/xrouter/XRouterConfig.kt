@@ -123,6 +123,9 @@ class XRouterConfig(
         XRouter.call(this, routerCallback)
     }
 
+    @JvmOverloads
+    fun get() = XRouter.get(this)
+
     override fun toString(): String {
         val jsonObject = JSONObject()
         try {
