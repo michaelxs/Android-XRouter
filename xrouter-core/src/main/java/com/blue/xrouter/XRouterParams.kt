@@ -7,5 +7,5 @@ import android.os.Bundle
  */
 class XRouterParams(
         val data: Bundle,
-        val any: Any? = null
+        val obj: Any? = null
 )

@@ -24,6 +24,8 @@ object TestBRouterService {
     @JvmStatic
     @Router("getSum_kotlin", async = true)
     fun getSum(context: Context, routerParams: XRouterParams, callback: XRouterCallback?) {
+        val fragment = routerParams.obj as Fragment
+        // TODO
         val a = routerParams.data.getInt("a")
         val b = routerParams.data.getInt("b")
         val result = a + b

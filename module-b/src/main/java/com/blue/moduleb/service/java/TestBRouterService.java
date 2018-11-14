@@ -25,6 +25,8 @@ public class TestBRouterService {
 
     @Router(value = "getSum_java", async = true)
     public static void getSum(Context context, XRouterParams routerParams, XRouterCallback callback) {
+        Fragment fragment = (Fragment) routerParams.getObj();
+        // TODO
         int a = routerParams.getData().getInt("a");
         int b = routerParams.getData().getInt("b");
         int result = a + b;

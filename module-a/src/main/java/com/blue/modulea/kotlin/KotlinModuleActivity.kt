@@ -55,7 +55,6 @@ class KotlinModuleActivity : AppCompatActivity() {
                             .target("hello.world")
                             .data("name", "blue")
                             .data("age", 18)
-                            .obj(Fragment())
                             .jump()
                 }
                 4 -> {
@@ -86,6 +85,7 @@ class KotlinModuleActivity : AppCompatActivity() {
                             .target("getSum_kotlin")
                             .data("a", 1)
                             .data("b", 2)
+                            .obj(Fragment())
                             .call(object : XRouterCallback() {
                                 override fun onRouterSuccess(routerResult: XRouterResult) {
                                     binding.tv.text = String.format("getSum() result is : %s", routerResult.data?.getInt("result"))

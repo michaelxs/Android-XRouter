@@ -37,7 +37,7 @@ publish {
     userOrg = 'andrew007vip007'
     groupId = 'com.xuyefeng'
     artifactId = 'xrouter-core'
-    publishVersion = '1.0.6'
+    publishVersion = '1.0.7'
     desc = 'This is a lightweight and simple routing framework that provides jump routing and method routing.'
     website = 'https://github.com/michaelxs/Android-XRouter.git'
 }

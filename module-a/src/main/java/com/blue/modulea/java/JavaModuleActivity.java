@@ -69,7 +69,6 @@ public class JavaModuleActivity extends AppCompatActivity {
                                 .target("hello.world")
                                 .data("name", "blue")
                                 .data("age", 18)
-                                .obj(new Fragment())
                                 .jump();
                         break;
                     case 4:
@@ -104,6 +103,7 @@ public class JavaModuleActivity extends AppCompatActivity {
                                 .target("getSum_java")
                                 .data("a", 1)
                                 .data("b", 2)
+                                .obj(new Fragment())
                                 .call(new XRouterCallback() {
                                     @Override
                                     public void onRouterSuccess(@NotNull XRouterResult routerResult) {
