@@ -100,41 +100,41 @@ object XRouter {
 
     fun invokeJump(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
         Logger.d(TAG, "invoke jump")
-        if (routerConfig.mTarget.isNotBlank()) {
+        if (routerConfig.getTarget().isNotBlank()) {
             // get only scheme+authority+path
-            var page = routerConfig.mTarget
-            if (routerConfig.mTarget.contains("?")) {
-                page = routerConfig.mTarget.split("[?]".toRegex()).toTypedArray()[0]
-            } else if (routerConfig.mTarget.contains("#")) {
-                page = routerConfig.mTarget.split("[#]".toRegex()).toTypedArray()[0]
+            var page = routerConfig.getTarget()
+            if (routerConfig.getTarget().contains("?")) {
+                page = routerConfig.getTarget().split("[?]".toRegex()).toTypedArray()[0]
+            } else if (routerConfig.getTarget().contains("#")) {
+                page = routerConfig.getTarget().split("[#]".toRegex()).toTypedArray()[0]
             }
             Logger.d(TAG, "page:$page")
             if (pagesMapping.containsKey(page)) {
                 Logger.d(TAG, "find page success")
                 val intent = Intent().apply {
                     setClass(routerConfig.context, pagesMapping[page])
-                    if (routerConfig.mIntentFlags != -1) {
-                        flags = routerConfig.mIntentFlags
+                    if (routerConfig.getIntentFlags() != -1) {
+                        flags = routerConfig.getIntentFlags()
                     }
                     if (routerConfig.context !is Activity) {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
-                    if (page != routerConfig.mTarget) {
-                        data = Uri.parse(routerConfig.mTarget)
+                    if (page != routerConfig.getTarget()) {
+                        data = Uri.parse(routerConfig.getTarget())
                     }
-                    putExtras(routerConfig.mData)
+                    putExtras(routerConfig.getData())
                 }
                 if (routerConfig.context is Activity) {
-                    if (routerConfig.mRequestCode != -1) {
+                    if (routerConfig.getRequestCode() != -1) {
                         Logger.d(TAG, "activity startActivityForResult")
-                        routerConfig.context.startActivityForResult(intent, routerConfig.mRequestCode)
+                        routerConfig.context.startActivityForResult(intent, routerConfig.getRequestCode())
                     } else {
                         Logger.d(TAG, "activity startActivity")
                         routerConfig.context.startActivity(intent)
                     }
-                    if (routerConfig.mEnterAnim != -1 && routerConfig.mExitAnim != -1) {
+                    if (routerConfig.getEnterAnim() != -1 && routerConfig.getExitAnim() != -1) {
                         Logger.d(TAG, "overridePendingTransition")
-                        routerConfig.context.overridePendingTransition(routerConfig.mEnterAnim, routerConfig.mExitAnim)
+                        routerConfig.context.overridePendingTransition(routerConfig.getEnterAnim(), routerConfig.getExitAnim())
                     }
                     routerCallback?.onRouterSuccess(XRouterResult())
                 } else {
@@ -158,10 +158,10 @@ object XRouter {
     fun call(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
         Logger.d(TAG, "--- start method async route ---")
         Logger.d(TAG, "routerConfig:$routerConfig")
-        val targetService = asyncMethodMapping[routerConfig.mTarget]
+        val targetService = asyncMethodMapping[routerConfig.getTarget()]
         targetService?.let {
             Logger.d(TAG, "find method success")
-            it.invoke(routerConfig.context, XRouterParams(routerConfig.mData, routerConfig.mAny), routerCallback)
+            it.invoke(routerConfig.context, XRouterParams(routerConfig.getData(), routerConfig.getObj()), routerCallback)
         } ?: let {
             Logger.d(TAG, "find method error")
             routerCallback?.onRouterError(XRouterResult())
@@ -174,10 +174,10 @@ object XRouter {
     fun get(routerConfig: XRouterConfig): XRouterResult {
         Logger.d(TAG, "--- start method sync route ---")
         Logger.d(TAG, "routerConfig:$routerConfig")
-        val targetService = syncMethodMapping[routerConfig.mTarget]
+        val targetService = syncMethodMapping[routerConfig.getTarget()]
         targetService?.let {
             Logger.d(TAG, "find method success")
-            return it.invoke(routerConfig.context, XRouterParams(routerConfig.mData, routerConfig.mAny))
+            return it.invoke(routerConfig.context, XRouterParams(routerConfig.getData(), routerConfig.getObj()))
         } ?: let {
             Logger.d(TAG, "find method error")
             return XRouterResult()

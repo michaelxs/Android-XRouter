@@ -69,7 +69,7 @@ public class JavaModuleActivity extends AppCompatActivity {
                                 .target("hello.world")
                                 .data("name", "blue")
                                 .data("age", 18)
-                                .any(new Fragment())
+                                .obj(new Fragment())
                                 .jump();
                         break;
                     case 4:

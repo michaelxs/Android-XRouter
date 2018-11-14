@@ -55,7 +55,7 @@ class KotlinModuleActivity : AppCompatActivity() {
                             .target("hello.world")
                             .data("name", "blue")
                             .data("age", 18)
-                            .any(Fragment())
+                            .obj(Fragment())
                             .jump()
                 }
                 4 -> {

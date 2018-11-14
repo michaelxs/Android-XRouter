@@ -14,102 +14,102 @@ class XRouterConfig(
         val context: Context
 ) {
 
-    var mTarget = ""
+    private var target = ""
 
-    var mRequestCode = -1
+    private var requestCode = -1
 
-    var mIntentFlags = -1
+    private var intentFlags = -1
 
-    var mEnterAnim = -1
-    var mExitAnim = -1
+    private var enterAnim = -1
+    private var exitAnim = -1
 
-    var mAny: Any? = null
+    private var obj: Any? = null
 
-    val mData by lazy { Bundle() }
+    private var data = Bundle()
 
     fun target(target: String): XRouterConfig {
-        mTarget = target
+        this.target = target
         return this
     }
 
     fun requestCode(requestCode: Int): XRouterConfig {
-        mRequestCode = requestCode
+        this.requestCode = requestCode
         return this
     }
 
     fun intentFlags(intentFlags: Int): XRouterConfig {
-        mIntentFlags = intentFlags
+        this.intentFlags = intentFlags
         return this
     }
 
     fun transition(enterAnim: Int, exitAnim: Int): XRouterConfig {
-        mEnterAnim = enterAnim
-        mExitAnim = exitAnim
+        this.enterAnim = enterAnim
+        this.exitAnim = exitAnim
         return this
     }
 
-    fun any(any: Any): XRouterConfig {
-        mAny = any
+    fun obj(obj: Any): XRouterConfig {
+        this.obj = obj
         return this
     }
 
     fun data(key: String, value: Byte): XRouterConfig {
-        mData.putByte(key, value)
+        data.putByte(key, value)
         return this
     }
 
     fun data(key: String, value: Short): XRouterConfig {
-        mData.putShort(key, value)
+        data.putShort(key, value)
         return this
     }
 
     fun data(key: String, value: Int): XRouterConfig {
-        mData.putInt(key, value)
+        data.putInt(key, value)
         return this
     }
 
     fun data(key: String, value: Long): XRouterConfig {
-        mData.putLong(key, value)
+        data.putLong(key, value)
         return this
     }
 
     fun data(key: String, value: Float): XRouterConfig {
-        mData.putFloat(key, value)
+        data.putFloat(key, value)
         return this
     }
 
     fun data(key: String, value: Double): XRouterConfig {
-        mData.putDouble(key, value)
+        data.putDouble(key, value)
         return this
     }
 
     fun data(key: String, value: Boolean): XRouterConfig {
-        mData.putBoolean(key, value)
+        data.putBoolean(key, value)
         return this
     }
 
     fun data(key: String, value: String): XRouterConfig {
-        mData.putString(key, value)
+        data.putString(key, value)
         return this
     }
 
     fun data(key: String, value: CharSequence): XRouterConfig {
-        mData.putCharSequence(key, value)
+        data.putCharSequence(key, value)
         return this
     }
 
     fun data(key: String, value: Parcelable): XRouterConfig {
-        mData.putParcelable(key, value)
+        data.putParcelable(key, value)
         return this
     }
 
     fun data(key: String, value: Serializable): XRouterConfig {
-        mData.putSerializable(key, value)
+        data.putSerializable(key, value)
         return this
     }
 
     fun data(data: Bundle): XRouterConfig {
-        mData.putAll(data)
+        data.putAll(data)
         return this
     }
 
@@ -123,19 +123,32 @@ class XRouterConfig(
         XRouter.call(this, routerCallback)
     }
 
-    @JvmOverloads
     fun get() = XRouter.get(this)
+
+    fun getTarget() = target
+
+    fun getRequestCode() = requestCode
+
+    fun getIntentFlags() = intentFlags
+
+    fun getEnterAnim() = enterAnim
+
+    fun getExitAnim() = exitAnim
+
+    fun getObj() = obj
+
+    fun getData() = data
 
     override fun toString(): String {
         val jsonObject = JSONObject()
         try {
-            jsonObject.put("target", mTarget)
-            jsonObject.put("requestCode", mRequestCode)
-            jsonObject.put("intentFlags", mIntentFlags)
-            jsonObject.put("enterAnim", mEnterAnim)
-            jsonObject.put("exitAnim", mExitAnim)
-            jsonObject.put("data", mData)
-            mAny?.let { jsonObject.put("any", it) }
+            jsonObject.put("target", target)
+            jsonObject.put("requestCode", requestCode)
+            jsonObject.put("intentFlags", intentFlags)
+            jsonObject.put("enterAnim", enterAnim)
+            jsonObject.put("exitAnim", exitAnim)
+            jsonObject.put("data", data)
+            obj?.let { jsonObject.put("any", it) }
         } catch (e: JSONException) {
             e.printStackTrace()
         }
