@@ -3,8 +3,8 @@ apply plugin: 'com.novoda.bintray-release'
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.auto.service:auto-service:1.0-rc2'
-    implementation 'com.squareup:javapoet:1.10.0'
+    compile 'com.google.auto.service:auto-service:1.0-rc3'
+    compile 'com.squareup:javapoet:1.8.0'
 //    compile 'com.xuyefeng:xrouter-annotation:1.0.1'
     compile project(':xrouter-annotation')
 }
@@ -16,7 +16,7 @@ publish {
     userOrg = 'andrew007vip007'
     groupId = 'com.xuyefeng'
     artifactId = 'xrouter-compiler'
-    publishVersion = '1.0.5'
+    publishVersion = '1.0.6'
     desc = 'This is a lightweight and simple routing framework that provides jump routing and method routing.'
     website = 'https://github.com/michaelxs/Android-XRouter.git'
 }
