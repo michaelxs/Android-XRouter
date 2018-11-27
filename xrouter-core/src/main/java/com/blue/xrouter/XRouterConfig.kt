@@ -109,7 +109,7 @@ class XRouterConfig(
     }
 
     fun data(data: Bundle): XRouterConfig {
-        data.putAll(data)
+        this.data.putAll(data)
         return this
     }
 
