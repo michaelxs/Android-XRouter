@@ -12,8 +12,8 @@ class XRouterResult private constructor(builder: Builder) {
     private var obj: Any? = null
 
     init {
-        this.data = builder.data
-        this.obj = builder.obj
+        this.data = builder.getData()
+        this.obj = builder.getObj()
     }
 
     fun getObj() = obj
@@ -21,8 +21,8 @@ class XRouterResult private constructor(builder: Builder) {
     fun getData() = data
 
     class Builder {
-        var data: Bundle = Bundle()
-        var obj: Any? = null
+        private var data: Bundle = Bundle()
+        private var obj: Any? = null
 
         fun obj(obj: Any?): Builder {
             this.obj = obj
@@ -92,5 +92,9 @@ class XRouterResult private constructor(builder: Builder) {
         fun build(): XRouterResult {
             return XRouterResult(this)
         }
+
+        fun getObj() = obj
+
+        fun getData() = data
     }
 }
