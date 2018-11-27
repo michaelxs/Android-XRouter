@@ -1,7 +1,6 @@
 package com.blue.routerb.service.kotlin
 
 import android.content.Context
-import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.widget.Toast
 import com.blue.xrouter.XRouterCallback
@@ -30,13 +29,13 @@ object TestBRouterService {
         val b = routerParams.data.getInt("b")
         val result = a + b
 
-        callback?.onRouterSuccess(XRouterResult(Bundle().apply { putInt("result", result) }))
+        callback?.onRouterSuccess(XRouterResult.Builder().data("result", result).build())
     }
 
     @JvmStatic
     @Router("getFragment_kotlin")
     fun getFragment(context: Context, routerParams: XRouterParams): XRouterResult {
         val fragment = Fragment()
-        return XRouterResult(fragment)
+        return XRouterResult.Builder().obj(fragment).build()
     }
 }

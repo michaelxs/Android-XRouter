@@ -107,9 +107,7 @@ public class JavaModuleActivity extends AppCompatActivity {
                                 .call(new XRouterCallback() {
                                     @Override
                                     public void onRouterSuccess(@NotNull XRouterResult routerResult) {
-                                        if (routerResult.getData() != null) {
-                                            binding.tv.setText(String.format("getSum() result is : %s", routerResult.getData().getInt("result")));
-                                        }
+                                        binding.tv.setText(String.format("getSum() result is : %s", routerResult.getData().getInt("result")));
                                     }
                                 });
                         break;

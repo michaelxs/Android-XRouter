@@ -91,11 +91,11 @@ object XRouter {
 
                 override fun onIntercept(msg: String) {
                     Logger.w(TAG, "onIntercept:$msg")
-                    routerCallback?.onRouterError(XRouterResult())
+                    routerCallback?.onRouterError(XRouterResult.Builder().build())
                 }
 
             })
-        } ?: routerCallback?.onRouterError(XRouterResult())
+        } ?: routerCallback?.onRouterError(XRouterResult.Builder().build())
     }
 
     fun invokeJump(routerConfig: XRouterConfig, routerCallback: XRouterCallback? = null) {
@@ -136,19 +136,19 @@ object XRouter {
                         Logger.d(TAG, "overridePendingTransition")
                         routerConfig.context.overridePendingTransition(routerConfig.getEnterAnim(), routerConfig.getExitAnim())
                     }
-                    routerCallback?.onRouterSuccess(XRouterResult())
+                    routerCallback?.onRouterSuccess(XRouterResult.Builder().build())
                 } else {
                     Logger.d(TAG, "context startActivity")
                     routerConfig.context.startActivity(intent)
-                    routerCallback?.onRouterSuccess(XRouterResult())
+                    routerCallback?.onRouterSuccess(XRouterResult.Builder().build())
                 }
             } else {
                 Logger.d(TAG, "find page error")
-                routerCallback?.onRouterError(XRouterResult())
+                routerCallback?.onRouterError(XRouterResult.Builder().build())
             }
         } else {
             Logger.d(TAG, "target is blank")
-            routerCallback?.onRouterError(XRouterResult())
+            routerCallback?.onRouterError(XRouterResult.Builder().build())
         }
     }
 
@@ -164,7 +164,7 @@ object XRouter {
             it.invoke(routerConfig.context, XRouterParams(routerConfig.getData(), routerConfig.getObj()), routerCallback)
         } ?: let {
             Logger.d(TAG, "find method error")
-            routerCallback?.onRouterError(XRouterResult())
+            routerCallback?.onRouterError(XRouterResult.Builder().build())
         }
     }
 
@@ -180,7 +180,7 @@ object XRouter {
             return it.invoke(routerConfig.context, XRouterParams(routerConfig.getData(), routerConfig.getObj()))
         } ?: let {
             Logger.d(TAG, "find method error")
-            return XRouterResult()
+            return XRouterResult.Builder().build()
         }
     }
 

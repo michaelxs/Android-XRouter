@@ -54,7 +54,7 @@ class KotlinModuleActivity : AppCompatActivity() {
                     XRouter.with(this)
                             .target("hello.world")
                             .data("name", "blue")
-                            .data("age", 18)
+                            .data("age", 18L)
                             .jump()
                 }
                 4 -> {
@@ -83,18 +83,18 @@ class KotlinModuleActivity : AppCompatActivity() {
                 7 -> {
                     XRouter.with(this)
                             .target("getSum_kotlin")
-                            .data("a", 1)
-                            .data("b", 2)
+                            .data("a", 1L)
+                            .data("b", 2L)
                             .obj(Fragment())
                             .call(object : XRouterCallback() {
                                 override fun onRouterSuccess(routerResult: XRouterResult) {
-                                    binding.tv.text = String.format("getSum() result is : %s", routerResult.data?.getInt("result"))
+                                    binding.tv.text = String.format("getSum() result is : %s", routerResult.getData().getInt("result"))
                                 }
                             })
                 }
                 8 -> {
                     val result = XRouter.with(this).target("getFragment_kotlin").get()
-                    result.obj?.let {
+                    result.getObj()?.let {
                         if (it is Fragment) {
                             binding.tv.text = String.format("getFragment() result is : %s", it)
                         }

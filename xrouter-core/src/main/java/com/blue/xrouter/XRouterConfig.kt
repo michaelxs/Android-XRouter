@@ -48,68 +48,68 @@ class XRouterConfig(
         return this
     }
 
-    fun obj(obj: Any): XRouterConfig {
+    fun obj(obj: Any?): XRouterConfig {
         this.obj = obj
         return this
     }
 
-    fun data(key: String, value: Byte): XRouterConfig {
-        data.putByte(key, value)
+    fun data(key: String, value: Byte?): XRouterConfig {
+        value?.let { data.putByte(key, it) }
         return this
     }
 
-    fun data(key: String, value: Short): XRouterConfig {
-        data.putShort(key, value)
+    fun data(key: String, value: Short?): XRouterConfig {
+        value?.let { data.putShort(key, it) }
         return this
     }
 
-    fun data(key: String, value: Int): XRouterConfig {
-        data.putInt(key, value)
+    fun data(key: String, value: Int?): XRouterConfig {
+        value?.let { data.putInt(key, it) }
         return this
     }
 
-    fun data(key: String, value: Long): XRouterConfig {
-        data.putLong(key, value)
+    fun data(key: String, value: Long?): XRouterConfig {
+        value?.let { data.putLong(key, it) }
         return this
     }
 
-    fun data(key: String, value: Float): XRouterConfig {
-        data.putFloat(key, value)
+    fun data(key: String, value: Float?): XRouterConfig {
+        value?.let { data.putFloat(key, it) }
         return this
     }
 
-    fun data(key: String, value: Double): XRouterConfig {
-        data.putDouble(key, value)
+    fun data(key: String, value: Double?): XRouterConfig {
+        value?.let { data.putDouble(key, it) }
         return this
     }
 
-    fun data(key: String, value: Boolean): XRouterConfig {
-        data.putBoolean(key, value)
+    fun data(key: String, value: Boolean?): XRouterConfig {
+        value?.let { data.putBoolean(key, it) }
         return this
     }
 
-    fun data(key: String, value: String): XRouterConfig {
+    fun data(key: String, value: String?): XRouterConfig {
         data.putString(key, value)
         return this
     }
 
-    fun data(key: String, value: CharSequence): XRouterConfig {
+    fun data(key: String, value: CharSequence?): XRouterConfig {
         data.putCharSequence(key, value)
         return this
     }
 
-    fun data(key: String, value: Parcelable): XRouterConfig {
+    fun data(key: String, value: Parcelable?): XRouterConfig {
         data.putParcelable(key, value)
         return this
     }
 
-    fun data(key: String, value: Serializable): XRouterConfig {
+    fun data(key: String, value: Serializable?): XRouterConfig {
         data.putSerializable(key, value)
         return this
     }
 
-    fun data(data: Bundle): XRouterConfig {
-        this.data.putAll(data)
+    fun data(bundle: Bundle?): XRouterConfig {
+        bundle?.let { data.putAll(it) }
         return this
     }
 

@@ -2,7 +2,6 @@ package com.blue.moduleb.service.java;
 
 
 import android.content.Context;
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
@@ -31,16 +30,14 @@ public class TestBRouterService {
         int b = routerParams.getData().getInt("b");
         int result = a + b;
 
-        Bundle data = new Bundle();
-        data.putInt("result", result);
         if (callback != null) {
-            callback.onRouterSuccess(new XRouterResult(data));
+            callback.onRouterSuccess(new XRouterResult.Builder().data("result", result).build());
         }
     }
 
     @Router("getFragment_java")
     public static XRouterResult getFragment(Context context, XRouterParams routerParams) {
         Fragment fragment = new Fragment();
-        return new XRouterResult(fragment);
+        return new XRouterResult.Builder().obj(fragment).build();
     }
 }
