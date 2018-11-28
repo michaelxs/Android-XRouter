@@ -53,38 +53,38 @@ class XRouterConfig(
         return this
     }
 
-    fun data(key: String, value: Byte?): XRouterConfig {
-        value?.let { data.putByte(key, it) }
+    fun data(key: String, value: Byte): XRouterConfig {
+        data.putByte(key, value)
         return this
     }
 
-    fun data(key: String, value: Short?): XRouterConfig {
-        value?.let { data.putShort(key, it) }
+    fun data(key: String, value: Short): XRouterConfig {
+        data.putShort(key, value)
         return this
     }
 
-    fun data(key: String, value: Int?): XRouterConfig {
-        value?.let { data.putInt(key, it) }
+    fun data(key: String, value: Int): XRouterConfig {
+        data.putInt(key, value)
         return this
     }
 
-    fun data(key: String, value: Long?): XRouterConfig {
-        value?.let { data.putLong(key, it) }
+    fun data(key: String, value: Long): XRouterConfig {
+        data.putLong(key, value)
         return this
     }
 
-    fun data(key: String, value: Float?): XRouterConfig {
-        value?.let { data.putFloat(key, it) }
+    fun data(key: String, value: Float): XRouterConfig {
+        data.putFloat(key, value)
         return this
     }
 
-    fun data(key: String, value: Double?): XRouterConfig {
-        value?.let { data.putDouble(key, it) }
+    fun data(key: String, value: Double): XRouterConfig {
+        data.putDouble(key, value)
         return this
     }
 
-    fun data(key: String, value: Boolean?): XRouterConfig {
-        value?.let { data.putBoolean(key, it) }
+    fun data(key: String, value: Boolean): XRouterConfig {
+        data.putBoolean(key, value)
         return this
     }
 
@@ -118,12 +118,11 @@ class XRouterConfig(
         XRouter.jump(this, routerCallback)
     }
 
-    @JvmOverloads
-    fun call(routerCallback: XRouterCallback? = null) {
+    fun route() = XRouter.get(this)
+
+    fun route(routerCallback: XRouterCallback? = null){
         XRouter.call(this, routerCallback)
     }
-
-    fun get() = XRouter.get(this)
 
     fun getTarget() = target
 

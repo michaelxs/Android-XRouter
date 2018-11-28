@@ -96,7 +96,7 @@ public class JavaModuleActivity extends AppCompatActivity {
                     case 6:
                         XRouter.with(context)
                                 .target("toast_java")
-                                .call();
+                                .route();
                         break;
                     case 7:
                         XRouter.with(context)
@@ -104,7 +104,7 @@ public class JavaModuleActivity extends AppCompatActivity {
                                 .data("a", 1)
                                 .data("b", 2)
                                 .obj(new Fragment())
-                                .call(new XRouterCallback() {
+                                .route(new XRouterCallback() {
                                     @Override
                                     public void onRouterSuccess(@NotNull XRouterResult routerResult) {
                                         binding.tv.setText(String.format("getSum() result is : %s", routerResult.getData().getInt("result")));
@@ -112,7 +112,7 @@ public class JavaModuleActivity extends AppCompatActivity {
                                 });
                         break;
                     case 8:
-                        XRouterResult result = XRouter.with(context).target("getFragment_java").get();
+                        XRouterResult result = XRouter.with(context).target("getFragment_java").route();
                         if (result.getObj() != null && result.getObj() instanceof Fragment) {
                             Fragment fragment = (Fragment) result.getObj();
                             binding.tv.setText(String.format("getFragment() result is : %s", fragment));

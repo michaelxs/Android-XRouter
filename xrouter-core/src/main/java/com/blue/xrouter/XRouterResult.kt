@@ -29,38 +29,38 @@ class XRouterResult private constructor(builder: Builder) {
             return this
         }
 
-        fun data(key: String, value: Byte?): Builder {
-            value?.let { data.putByte(key, it) }
+        fun data(key: String, value: Byte): Builder {
+            data.putByte(key, value)
             return this
         }
 
-        fun data(key: String, value: Short?): Builder {
-            value?.let { data.putShort(key, it) }
+        fun data(key: String, value: Short): Builder {
+            data.putShort(key, value)
             return this
         }
 
-        fun data(key: String, value: Int?): Builder {
-            value?.let { data.putInt(key, it) }
+        fun data(key: String, value: Int): Builder {
+            data.putInt(key, value)
             return this
         }
 
-        fun data(key: String, value: Long?): Builder {
-            value?.let { data.putLong(key, it) }
+        fun data(key: String, value: Long): Builder {
+            data.putLong(key, value)
             return this
         }
 
-        fun data(key: String, value: Float?): Builder {
-            value?.let { data.putFloat(key, it) }
+        fun data(key: String, value: Float): Builder {
+            data.putFloat(key, value)
             return this
         }
 
-        fun data(key: String, value: Double?): Builder {
-            value?.let { data.putDouble(key, it) }
+        fun data(key: String, value: Double): Builder {
+            data.putDouble(key, value)
             return this
         }
 
-        fun data(key: String, value: Boolean?): Builder {
-            value?.let { data.putBoolean(key, it) }
+        fun data(key: String, value: Boolean): Builder {
+            data.putBoolean(key, value)
             return this
         }
 

@@ -15,9 +15,10 @@ import com.blue.xrouter.annotation.Router
 object TestBRouterService {
 
     @JvmStatic
-    @Router("toast_kotlin", async = true)
-    fun toast(context: Context, routerParams: XRouterParams, callback: XRouterCallback?) {
+    @Router("toast_kotlin")
+    fun toast(context: Context, routerParams: XRouterParams): XRouterResult {
         Toast.makeText(context, "toast from other module", Toast.LENGTH_SHORT).show()
+        return XRouterResult.Builder().build()
     }
 
     @JvmStatic

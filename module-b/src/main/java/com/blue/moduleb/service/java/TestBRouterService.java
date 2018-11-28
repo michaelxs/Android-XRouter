@@ -17,9 +17,10 @@ import com.blue.xrouter.annotation.Router;
 
 public class TestBRouterService {
 
-    @Router(value = "toast_java", async = true)
-    public static void toast(Context context, XRouterParams routerParams, XRouterCallback callback) {
+    @Router(value = "toast_java")
+    public static XRouterResult toast(Context context, XRouterParams routerParams) {
         Toast.makeText(context, "toast from other module", Toast.LENGTH_SHORT).show();
+        return new XRouterResult.Builder().build();
     }
 
     @Router(value = "getSum_java", async = true)
