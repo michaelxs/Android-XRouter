@@ -101,14 +101,13 @@ class XRouterResult private constructor(builder: Builder) {
     }
 
     override fun toString(): String {
-        val jsonObject = JSONObject()
-        try {
+        return try {
+            val jsonObject = JSONObject()
             jsonObject.put("data", data)
             obj?.let { jsonObject.put("any", it) }
+            jsonObject.toString(4)
         } catch (e: JSONException) {
-            e.printStackTrace()
+            e.message ?: ""
         }
-
-        return jsonObject.toString(4)
     }
 }
