@@ -76,11 +76,6 @@ public class JavaModuleActivity extends AppCompatActivity {
                                 .target("www.google.com")
                                 .jump(new XRouterCallback() {
                                     @Override
-                                    public void onRouterSuccess(@NotNull XRouterResult routerResult) {
-
-                                    }
-
-                                    @Override
                                     public void onRouterError(@NotNull XRouterResult routerResult) {
                                         Toast.makeText(context, "target activity is not find", Toast.LENGTH_SHORT).show();
                                     }
@@ -107,6 +102,7 @@ public class JavaModuleActivity extends AppCompatActivity {
                                 .route(new XRouterCallback() {
                                     @Override
                                     public void onRouterSuccess(@NotNull XRouterResult routerResult) {
+                                        super.onRouterSuccess(routerResult);
                                         binding.tv.setText(String.format("getSum() result is : %s", routerResult.getData().getInt("result")));
                                     }
                                 });

@@ -61,9 +61,6 @@ class KotlinModuleActivity : AppCompatActivity() {
                     XRouter.with(this)
                             .target("www.google.com")
                             .jump(object : XRouterCallback() {
-                                override fun onRouterSuccess(routerResult: XRouterResult) {
-                                }
-
                                 override fun onRouterError(routerResult: XRouterResult) {
                                     Toast.makeText(this@KotlinModuleActivity, "target activity is not find", Toast.LENGTH_SHORT).show()
                                 }
@@ -88,6 +85,7 @@ class KotlinModuleActivity : AppCompatActivity() {
                             .obj(Fragment())
                             .route(object : XRouterCallback() {
                                 override fun onRouterSuccess(routerResult: XRouterResult) {
+                                    super.onRouterSuccess(routerResult)
                                     binding.tv.text = String.format("getSum() result is : %s", routerResult.getData().getInt("result"))
                                 }
                             })

@@ -2,6 +2,8 @@ package com.blue.xrouter
 
 import android.os.Bundle
 import android.os.Parcelable
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.Serializable
 
 /**
@@ -96,5 +98,17 @@ class XRouterResult private constructor(builder: Builder) {
         fun getObj() = obj
 
         fun getData() = data
+    }
+
+    override fun toString(): String {
+        val jsonObject = JSONObject()
+        try {
+            jsonObject.put("data", data)
+            obj?.let { jsonObject.put("any", it) }
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+        return jsonObject.toString(4)
     }
 }

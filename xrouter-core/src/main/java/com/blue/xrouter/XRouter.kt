@@ -177,7 +177,9 @@ object XRouter {
         val targetService = syncMethodMapping[routerConfig.getTarget()]
         targetService?.let {
             Logger.d(TAG, "find method success")
-            return it.invoke(routerConfig.context, XRouterParams(routerConfig.getData(), routerConfig.getObj()))
+            val routerResult = it.invoke(routerConfig.context, XRouterParams(routerConfig.getData(), routerConfig.getObj()))
+            Logger.d(TAG, "routerResult:$routerResult")
+            return routerResult
         } ?: let {
             Logger.d(TAG, "find method error")
             return XRouterResult.Builder().build()
