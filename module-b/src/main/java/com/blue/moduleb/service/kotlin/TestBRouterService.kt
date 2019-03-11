@@ -1,4 +1,4 @@
-package com.blue.routerb.service.kotlin
+package com.blue.moduleb.service.kotlin
 
 import android.content.Context
 import android.support.v4.app.Fragment
