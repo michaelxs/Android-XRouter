@@ -118,10 +118,38 @@ class XRouterConfig(
         XRouter.jump(this, routerCallback)
     }
 
+    fun jump(errorBlock: ((XRouterResult) -> Unit)? = null, successBlock: ((XRouterResult) -> Unit)? = null) {
+        XRouter.jump(this, object : XRouterCallback() {
+
+            override fun onRouterSuccess(routerResult: XRouterResult) {
+                super.onRouterSuccess(routerResult)
+                successBlock?.invoke(routerResult)
+            }
+
+            override fun onRouterError(routerResult: XRouterResult) {
+                errorBlock?.invoke(routerResult)
+            }
+        })
+    }
+
     fun route() = XRouter.get(this)
 
     fun route(routerCallback: XRouterCallback? = null) {
         XRouter.call(this, routerCallback)
+    }
+
+    fun route(errorBlock: ((XRouterResult) -> Unit)? = null, successBlock: ((XRouterResult) -> Unit)? = null) {
+        XRouter.call(this, object : XRouterCallback() {
+
+            override fun onRouterSuccess(routerResult: XRouterResult) {
+                super.onRouterSuccess(routerResult)
+                successBlock?.invoke(routerResult)
+            }
+
+            override fun onRouterError(routerResult: XRouterResult) {
+                errorBlock?.invoke(routerResult)
+            }
+        })
     }
 
     fun getTarget() = target

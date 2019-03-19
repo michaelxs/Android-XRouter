@@ -12,8 +12,6 @@ import android.widget.Toast
 import com.blue.modulea.R
 import com.blue.modulea.databinding.ModuleaActivityMainBinding
 import com.blue.xrouter.XRouter
-import com.blue.xrouter.XRouterCallback
-import com.blue.xrouter.XRouterResult
 import com.blue.xrouter.annotation.Router
 import kotlinx.android.synthetic.main.modulea_activity_main.*
 
@@ -60,10 +58,8 @@ class KotlinModuleActivity : AppCompatActivity() {
                 4 -> {
                     XRouter.with(this)
                             .target("www.google.com")
-                            .jump(object : XRouterCallback() {
-                                override fun onRouterError(routerResult: XRouterResult) {
-                                    Toast.makeText(this@KotlinModuleActivity, "target activity is not find", Toast.LENGTH_SHORT).show()
-                                }
+                            .jump({
+                                Toast.makeText(this@KotlinModuleActivity, "target activity is not find", Toast.LENGTH_SHORT).show()
                             })
                 }
                 5 -> {
@@ -83,12 +79,9 @@ class KotlinModuleActivity : AppCompatActivity() {
                             .data("a", 1)
                             .data("b", 2)
                             .obj(Fragment())
-                            .route(object : XRouterCallback() {
-                                override fun onRouterSuccess(routerResult: XRouterResult) {
-                                    super.onRouterSuccess(routerResult)
-                                    binding.tv.text = String.format("getSum() result is : %s", routerResult.getData().getInt("result"))
-                                }
-                            })
+                            .route {
+                                binding.tv.text = String.format("getSum() result is : %s", it.getData().getInt("result"))
+                            }
                 }
                 8 -> {
                     val result = XRouter.with(this).target("getFragment_kotlin").route()
