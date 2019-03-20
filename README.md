@@ -51,6 +51,7 @@ kapt {
 ```
 - The Routing App consists of three routing modules, app, module, and moduleb. Corresponding to the project name of the route module registered in step 4
 - Here you can dynamically set XRouterApp based on a freely assembled module
+
 6.Initialize XRouter
 ```kotlin
 @RouterApp
