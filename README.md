@@ -188,6 +188,7 @@ fun getSum(context: Context, routerParams: XRouterParams, callback: XRouterCallb
 - The parameters received by all synchronous routes are Context and XRouterParams. Please keep the same way
 - The parameters received by all asynchronous routes are Context, XRouterParams, and XRouterCallback. Please keep the same syntax
 - The parameters passed by the route can be obtained through XRouterParams. The parameters of the route result can be set by XRouterResult. Both pass the parameters by bundle, and obj passes the object data
+
 2.Call method
 ```kotlin
 // No-parameter routing
