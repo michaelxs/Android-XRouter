@@ -28,7 +28,7 @@ apply plugin: 'kotlin-kapt'
 3.Add dependencies in app's build.gradle and module's build.gradle (please use the latest version)
 ```groovy
 dependencies {
-		...
+    ...
     implementation 'com.xuyefeng:xrouter-core:1.1.3'
     kapt 'com.xuyefeng:xrouter-compiler:1.0.6'
 }
@@ -169,17 +169,17 @@ fun toast(context: Context, routerParams: XRouterParams): XRouterResult {
 
 @Router("getSum", async = true)
 fun getSum(context: Context, routerParams: XRouterParams, callback: XRouterCallback?) {
-  	// get object data
+    // get object data
     val fragment = routerParams.obj as Fragment
-  	// get data
+    // get data
     val a = routerParams.data.getInt("a")
     val b = routerParams.data.getInt("b")
-  	...
+    ...
     val sum = a + b
-  	val result = XRouterResult.Builder().data("sum", sum).obj(fragment).build()
+    val result = XRouterResult.Builder().data("sum", sum).obj(fragment).build()
     callback?.onRouterSuccess(result)
-  	// or
-  	callback?.onRouterError(result)
+    // or
+    callback?.onRouterError(result)
 }
 ```
 - Annotated methods need to be global static methods
