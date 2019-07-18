@@ -119,9 +119,7 @@ object XRouter {
                     if (routerConfig.context !is Activity) {
                         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     }
-                    if (page != routerConfig.getTarget()) {
-                        data = Uri.parse(routerConfig.getTarget())
-                    }
+                    data = Uri.parse(routerConfig.getTarget())
                     putExtras(routerConfig.getData())
                 }
                 if (routerConfig.context is Activity) {
